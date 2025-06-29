@@ -2,6 +2,7 @@ import AppKit
 
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     var window: NSWindow!
+    var customView: CustomView!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         let screenRect = NSScreen.main?.frame ?? NSRect()
@@ -17,32 +18,49 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             backing: .buffered,
             defer: false
         )
-        window.title = "Hello World App"
+        window.title = "Hello World App with Custom Drawing"
         window.center()
         window.makeKeyAndOrderFront(nil)
 
+        // Add the custom drawing view
+        customView = CustomView(frame: window.contentView?.bounds ?? NSRect.zero)
+        customView.autoresizingMask = [.width, .height] // Resize the view with the window
+        window.contentView?.addSubview(customView)
+
+        // Activate the application
         NSApplication.shared.activate(ignoringOtherApps: true)
-
-        let label = NSTextField(labelWithString: "Hello, World!")
-        label.alignment = .center
-        label.font = NSFont.systemFont(ofSize: 24)
-        label.translatesAutoresizingMaskIntoConstraints = false // Enable Auto Layout
-        window.contentView?.addSubview(label)
-
-        if let contentView = window.contentView {
-            NSLayoutConstraint.activate([
-                label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-                label.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-                label.heightAnchor.constraint(lessThanOrEqualTo: contentView.heightAnchor)
-            ])
-        }
 
         window.delegate = self
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         return true
+    }
+}
+
+// Custom NSView for custom paint logic
+class CustomView: NSView {
+    override func draw(_ dirtyRect: NSRect) {
+        super.draw(dirtyRect)
+
+        // Your custom drawing logic here
+        guard let context = NSGraphicsContext.current?.cgContext else { return }
+
+        // Clear the background with white color
+        NSColor.white.setFill()
+        context.fill(bounds)
+
+        // Draw a red rectangle
+        NSColor.red.setFill()
+        let rect = NSRect(x: bounds.midX - 50, y: bounds.midY - 25, width: 100, height: 50)
+        context.fill(rect)
+
+        // Draw a black diagonal line
+        NSColor.black.setStroke()
+        context.setLineWidth(2)
+        context.move(to: CGPoint(x: bounds.minX, y: bounds.minY))
+        context.addLine(to: CGPoint(x: bounds.maxX, y: bounds.maxY))
+        context.strokePath()
     }
 }
 
@@ -58,5 +76,5 @@ func start() {
 
 @_cdecl("line")
 func line(x1: Float, y1: Float, x2: Float, y2: Float) {
-    //delegate.
+    // Placeholder implementation (for expanding custom drawing if needed)
 }
