@@ -18,7 +18,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             backing: .buffered,
             defer: false
         )
-        window.title = "cxgui Appkit Window"
+        window.title = "cxpui Appkit Window"
         window.center()
         window.makeKeyAndOrderFront(nil)
 

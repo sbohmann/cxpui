@@ -19,14 +19,13 @@ void rect(double x, double y, double w, double h) {
     cairo_fill(global_cr);  // Fill the rectangle with the current color
 }
 
-
 void draw(struct Context context);
 
 static gboolean draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data) {
-    GtkAllocation allocation;
-    gtk_widget_get_allocation(widget, &allocation);
-    double width = allocation.width;
-    double height = allocation.height;
+    graphene_rect_t rectangle;
+    gtk_widget_compute_bounds(widget, nullptr, &rectangle);
+    double width = rectangle.size.width;
+    double height = rectangle.size.height;
 
     struct Context context = {width, height};
 
@@ -40,7 +39,7 @@ static gboolean draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data) {
 static void on_activate(GtkApplication *app, gpointer user_data) {
     // Create a new application window
     GtkWidget *window = gtk_application_window_new(app); // Attach the window to the application
-    gtk_window_set_title(GTK_WINDOW(window), "cxui GTK+ Window");
+    gtk_window_set_title(GTK_WINDOW(window), "cxpui GTK+ Window");
     gtk_window_set_default_size(GTK_WINDOW(window), 400, 300);
 
     // Create a GtkDrawingArea for custom rendering
@@ -51,18 +50,19 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
     g_signal_connect(drawing_area, "draw", G_CALLBACK(draw_callback), NULL);
 
     // Present the window (show it)
+    gtk_widget_set_visible(drawing_area, true);
     gtk_window_present(GTK_WINDOW(window));
 }
 
 void start() {
     // Create a new GtkApplication
-    GtkApplication *app = gtk_application_new("com.example.gtkapp", G_APPLICATION_FLAGS_NONE);
+    GtkApplication *app = gtk_application_new("com.example.gtkapp", G_APPLICATION_DEFAULT_FLAGS);
 
     // Connect the "activate" signal to our activation function
     g_signal_connect(app, "activate", G_CALLBACK(on_activate), NULL);
 
     // Run the application
-    int status = g_application_run(G_APPLICATION(app), 0, NULL);
+    int status = g_application_run(G_APPLICATION(app), 0, nullptr);
 
     // Clean up
     g_object_unref(app);
