@@ -15,3 +15,6 @@ set_target_properties(cxpui PROPERTIES
 target_link_libraries(swift_cxpui "-framework AppKit")
 
 target_link_libraries(cxpui PRIVATE swift_cxpui)
+
+set(CMAKE_Swift_FLAGS "-import-objc-header ${CMAKE_SOURCE_DIR}/cxpui.h")
+
