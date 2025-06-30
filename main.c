@@ -8,10 +8,12 @@ int main(void) {
 
 void line(double x1, double y1, double x2, double y2);
 
+void rect(double x, double y, double w, double h);
+
 int get_num_steps(struct Context context) {
     int num_x_steps = (int) (context.width / 10);
-    int num_y_steps = (int) (context.width / 10);
-    return num_x_steps < num_y_steps ? num_x_steps : num_y_steps;
+    int num_y_steps = (int) (context.height / 10);
+    return (num_x_steps + num_y_steps) / 2;
 }
 
 void draw(struct Context context) {
@@ -24,4 +26,5 @@ void draw(struct Context context) {
         line(context.width - x, 0, 0, y);
         line(context.width - x, context.height, 0, context.height - y);
     }
+    rect(context.width / 3.0, context.height / 3.0, context.width / 3.0, context.height / 3.0);
 }

@@ -24,7 +24,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         // Add the custom drawing view
         customView = CustomView(frame: window.contentView?.bounds ?? NSRect.zero)
-        customView.autoresizingMask = [.width, .height] // Resize the view with the window
+        customView.autoresizingMask = [.width, .height]  // Resize the view with the window
         customView.drawFunction = draw
         window.contentView?.addSubview(customView)
 
@@ -41,9 +41,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
 // Custom NSView for custom paint logic
 class CustomView: NSView {
-    var drawFunction: ((Context) -> ())!
+    var drawFunction: ((Context) -> Void)!
 
-    func setDrawFunction(drawFunction: @escaping (Context) -> ()) {
+    func setDrawFunction(drawFunction: @escaping (Context) -> Void) {
         self.drawFunction = drawFunction
     }
 
@@ -65,24 +65,10 @@ class CustomView: NSView {
         NSColor.white.setFill()
         context.fill(bounds)
 
-//        // Draw a red rectangle
-//        NSColor.red.setFill()
-//        let rect = NSRect(x: bounds.midX - 50, y: bounds.midY - 25, width: 100, height: 50)
-//        context.fill(rect)
-//
-//        // Draw a black diagonal line
-//        NSColor.black.setStroke()
-//        context.setLineWidth(2)
-//        context.move(to: CGPoint(x: bounds.minX, y: bounds.minY))
-//        context.addLine(to: CGPoint(x: bounds.maxX, y: bounds.maxY))
-//        context.strokePath()
-//
-//        NSColor.red.setStroke()
-//            globalContext.setLineWidth(2)
-//            globalContext.move(to: CGPoint(x: 0, y: 0))
-//            globalContext.addLine(to: CGPoint(x: 50, y: 50))
-//            globalContext.strokePath()
-        self.drawFunction(Context(width: bounds.size.width, height: bounds.size.height))
+        self.drawFunction(
+            Context(
+                width: bounds.size.width,
+                height: bounds.size.height))
     }
 }
 
@@ -105,6 +91,12 @@ func line(x1: CGFloat, y1: CGFloat, x2: CGFloat, y2: CGFloat) {
     globalContext.move(to: CGPoint(x: x1, y: y1))
     globalContext.addLine(to: CGPoint(x: x2, y: y2))
     globalContext.strokePath()
+}
+
+@_cdecl("rect")
+func rect(x: CGFloat, y: CGFloat, w: CGFloat, h: CGFloat) {
+    NSColor.red.setFill()
+    globalContext.fill(NSRect(x: x, y: y, width: w, height: h))
 }
 
 @_silgen_name("draw")
