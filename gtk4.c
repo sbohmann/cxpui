@@ -21,37 +21,38 @@ void rect(double x, double y, double w, double h) {
 
 void draw(struct Context context);
 
-static gboolean draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data) {
-    graphene_rect_t rectangle;
-    gtk_widget_compute_bounds(widget, nullptr, &rectangle);
-    double width = rectangle.size.width;
-    double height = rectangle.size.height;
-
+static void draw_callback(GtkDrawingArea *drawing_area,
+         cairo_t        *cr,
+         int             width,
+         int             height,
+         gpointer        data) {
     struct Context context = {width, height};
 
     // Replace AppKit-specific logic with GTK rendering
     global_cr = cr;  // Equivalent to CGContext
     draw(context);
-
-    return FALSE;
+    global_cr = nullptr;
 }
 
 static void on_activate(GtkApplication *app, gpointer user_data) {
     // Create a new application window
     GtkWidget *window = gtk_application_window_new(app); // Attach the window to the application
-    gtk_window_set_title(GTK_WINDOW(window), "cxpui GTK+ Window");
+    gtk_window_set_title(GTK_WINDOW(window), "cxpui gtk4 Window");
     gtk_window_set_default_size(GTK_WINDOW(window), 400, 300);
 
     // Create a GtkDrawingArea for custom rendering
-    GtkWidget *drawing_area = gtk_drawing_area_new();
+    GtkDrawingArea *drawing_area = gtk_drawing_area_new();
     gtk_window_set_child(GTK_WINDOW(window), drawing_area);
-
-    // Connect the "draw" signal to the drawing callback
-    g_signal_connect(drawing_area, "draw", G_CALLBACK(draw_callback), NULL);
 
     // Present the window (show it)
     gtk_widget_set_visible(drawing_area, true);
     gtk_window_present(GTK_WINDOW(window));
+
+    // Connect the "draw" signal to the drawing callback
+    // g_signal_connect(drawing_area, "draw", G_CALLBACK(draw_callback), NULL);
+    gtk_drawing_area_set_draw_func(drawing_area, draw_callback, NULL, nullptr);
+
+    gtk_widget_queue_draw(GTK_WIDGET(drawing_area));
 }
 
 void start() {
