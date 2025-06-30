@@ -41,7 +41,7 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
     gtk_window_set_default_size(GTK_WINDOW(window), 400, 300);
 
     // Create a GtkDrawingArea for custom rendering
-    GtkDrawingArea *drawing_area = gtk_drawing_area_new();
+    GtkWidget *drawing_area = gtk_drawing_area_new();
     gtk_window_set_child(GTK_WINDOW(window), drawing_area);
 
     // Present the window (show it)
@@ -50,14 +50,14 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
 
     // Connect the "draw" signal to the drawing callback
     // g_signal_connect(drawing_area, "draw", G_CALLBACK(draw_callback), NULL);
-    gtk_drawing_area_set_draw_func(drawing_area, draw_callback, NULL, nullptr);
+    gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(drawing_area), draw_callback, NULL, nullptr);
 
     gtk_widget_queue_draw(GTK_WIDGET(drawing_area));
 }
 
 void start() {
     // Create a new GtkApplication
-    GtkApplication *app = gtk_application_new("com.example.gtkapp", G_APPLICATION_DEFAULT_FLAGS);
+    GtkApplication *app = gtk_application_new("at.yeoman.cxpui.gtk4", G_APPLICATION_DEFAULT_FLAGS);
 
     // Connect the "activate" signal to our activation function
     g_signal_connect(app, "activate", G_CALLBACK(on_activate), NULL);
