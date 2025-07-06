@@ -124,11 +124,15 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
     gtk_window_set_default_size(GTK_WINDOW(window), 400, 300);
 
     // Create a GtkWidget and attach a custom GdkPaintable
-    GtkWidget *paintable_widget = gtk_widget_paintable_new(GTK_TYPE_WIDGET);
+    CustomPaintable *paintable = custom_paintable_new();
+
+    GtkWidget * paintable_widget = GTK_WIDGET(paintable);
+    gtk_widget_set_visible(paintable_widget, true);
+    gtk_widget_set_visible(window, true);
+
     gtk_widget_set_size_request(paintable_widget, 400, 300);
 
     // Assign the custom paintable
-    CustomPaintable *paintable = custom_paintable_new();
     gtk_widget_set_paintable(GTK_WIDGET(paintable_widget), GDK_PAINTABLE(paintable));
     g_object_unref(paintable);
 
