@@ -5,37 +5,37 @@
 // Global Snapshot for Drawing Functions
 GtkSnapshot *global_snapshot;
 
-struct Fuck{int a, double b};
-
 // Drawing Utilities
 void line(double x1, double y1, double x2, double y2) {
     double thickness = 2.0;
 
-    // Compute the rectangle representing the line
+    // Calculate the line length and angle
     double dx = x2 - x1;
     double dy = y2 - y1;
     double length = sqrt(dx * dx + dy * dy);
+    double angle = atan2(dy, dx);
 
-    graphene_matrix_t matrix;
-    graphene_matrix_init_identity(&matrix);
-    graphene_point3d_t start_position = {
-        .x = (float) x1,
-        .y = (float) y1,
-        .z = 0};
-    graphene_matrix_translate(&matrix, &start_position);
-    graphene_vec3_t rotation_axis = {};
-    graphene_vec3_init(&rotation_axis, 0, 0, 1);
-    graphene_matrix_rotate(&matrix, (float) atan2(dy, dx), &rotation_axis);
-    graphene_matrix_scale(&matrix, (float) length, (float) thickness, 1);
+    // Create a GskTransform to translate, rotate, and scale
+    GskTransform *transform = NULL;
+    transform = gsk_transform_translate(transform, &(graphene_point_t){x1, y1});
+    transform = gsk_transform_rotate(transform, angle * (180.0 / G_PI)); // Convert radians to degrees
+    transform = gsk_transform_scale(transform, length, thickness);
 
-    GdkRGBA color = {0.0f, 0.0f, 1.0f, 1.0f}; // Blue
+    // The rectangle representing the "line"
+    graphene_rect_t rect = GRAPHENE_RECT_INIT(0, -thickness / 2, 1, 1); // Thin rectangle for line
+    GdkRGBA color = {0.0, 0.0, 1.0, 1.0}; // Blue
 
-    graphene_rect_t rect = GRAPHENE_RECT_INIT(0, -thickness / 2, 1, 1); // Draw thin rectangle
+    // Create the node and apply the transform
     GskRenderNode *node = gsk_transform_node_new(
-        gsk_color_node_new(&color, &rect), &matrix);
-    gtk_snapshot_append_node(global_snapshot, node);
-    g_object_unref(node);
+        gsk_color_node_new(&color, &rect),
+        transform
+    );
 
+    gtk_snapshot_append_node(global_snapshot, node);
+
+    // Free resources
+    gsk_transform_unref(transform);
+    g_object_unref(node);
 }
 
 void rect(double x, double y, double w, double h) {
@@ -103,11 +103,6 @@ static void custom_paintable_init(CustomPaintable *self) {
     self->height = 300; // Initialize default height
 }
 
-// Public Constructor for CustomPaintable
-CustomPaintable *custom_paintable_new() {
-    return g_object_new(custom_paintable_get_type(), NULL);
-}
-
 G_DEFINE_TYPE_WITH_CODE(
     CustomPaintable,
     custom_paintable,
@@ -115,6 +110,11 @@ G_DEFINE_TYPE_WITH_CODE(
     G_IMPLEMENT_INTERFACE(
         GDK_TYPE_PAINTABLE,
         custom_paintable_interface_init))
+
+// Public Constructor for CustomPaintable
+CustomPaintable *custom_paintable_new() {
+    return g_object_new(custom_paintable_get_type(), nullptr);
+}
 
 // GTK Application Activation
 static void on_activate(GtkApplication *app, gpointer user_data) {
