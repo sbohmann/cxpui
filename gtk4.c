@@ -115,6 +115,25 @@ G_DEFINE_TYPE_WITH_CODE(
 CustomPaintable *custom_paintable_new() {
     return g_object_new(custom_paintable_get_type(), nullptr);
 }
+static void custom_draw(GtkDrawingArea *area, GtkSnapshot *snapshot, gpointer user_data) {
+    GdkPaintable *paintable = GDK_PAINTABLE(user_data);
+
+    // Get the size of the drawing area
+    double width = gtk_widget_get_allocated_width(GTK_WIDGET(area));
+    double height = gtk_widget_get_allocated_height(GTK_WIDGET(area));
+
+    // Render the paintable into the snapshot
+    gdk_paintable_snapshot(paintable, snapshot, width, height);
+}
+
+GtkWidget *create_drawing_area_for_paintable(GdkPaintable *paintable) {
+    GtkWidget *drawing_area = gtk_drawing_area_new();
+
+    // Connect the "snapshot" signal for custom rendering
+    g_signal_connect(drawing_area, "snapshot", G_CALLBACK(custom_draw), paintable);
+
+    return drawing_area;
+}
 
 // GTK Application Activation
 static void on_activate(GtkApplication *app, gpointer user_data) {
@@ -133,7 +152,7 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
     gtk_widget_set_size_request(paintable_widget, 400, 300);
 
     // Assign the custom paintable
-    gtk_widget_set_paintable(GTK_WIDGET(paintable_widget), GDK_PAINTABLE(paintable));
+    // gtk_widget_set_paintable(GTK_WIDGET(paintable_widget), GDK_PAINTABLE(paintable));
     g_object_unref(paintable);
 
     // Add the widget to the application window
