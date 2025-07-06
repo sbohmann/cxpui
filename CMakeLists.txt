@@ -16,6 +16,11 @@ target_link_libraries(swift_cxpui PRIVATE swift_cxpui_backend)
 target_link_libraries(swift_cxpui_backend "-framework AppKit")
 set(CMAKE_Swift_FLAGS "-import-objc-header ${CMAKE_SOURCE_DIR}/cxpui.h")
 
+add_executable(graph graph.c)
+target_compile_options(graph PRIVATE ${GTK4_CFLAGS_OTHER})
+target_include_directories(graph PRIVATE ${GTK4_INCLUDE_DIRS})
+target_link_directories(graph PRIVATE /opt/homebrew/lib)
+target_link_libraries(graph ${GTK4_LIBRARIES})
 
 add_executable(gtk_cxpui main.c)
 add_library(gtk_cxpui_backend gtk.c)
