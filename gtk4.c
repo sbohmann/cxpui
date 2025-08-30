@@ -50,13 +50,13 @@ void rect(double x, double y, double w, double h) {
 void draw(struct Context context);
 
 typedef struct {
-    GObject parent_instance;
+    GtkWidget parent_instance;
     int width;
     int height;
 } CustomPaintable;
 
 typedef struct {
-    GObjectClass parent_class;
+    GtkWidgetClass parent_class;
 } CustomPaintableClass;
 
 // Define Snapshot Behavior
@@ -106,7 +106,7 @@ static void custom_paintable_init(CustomPaintable *self) {
 G_DEFINE_TYPE_WITH_CODE(
     CustomPaintable,
     custom_paintable,
-    G_TYPE_OBJECT,
+    GTK_TYPE_WIDGET,
     G_IMPLEMENT_INTERFACE(
         GDK_TYPE_PAINTABLE,
         custom_paintable_interface_init))
@@ -119,8 +119,8 @@ static void custom_draw(GtkDrawingArea *area, GtkSnapshot *snapshot, gpointer us
     GdkPaintable *paintable = GDK_PAINTABLE(user_data);
 
     // Get the size of the drawing area
-    double width = gtk_widget_get_allocated_width(GTK_WIDGET(area));
-    double height = gtk_widget_get_allocated_height(GTK_WIDGET(area));
+    double width = gtk_widget_get_width(GTK_WIDGET(area));
+    double height = gtk_widget_get_height(GTK_WIDGET(area));
 
     // Render the paintable into the snapshot
     gdk_paintable_snapshot(paintable, snapshot, width, height);
@@ -145,18 +145,20 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
     // Create a GtkWidget and attach a custom GdkPaintable
     CustomPaintable *paintable = custom_paintable_new();
 
-    GtkWidget * paintable_widget = GTK_WIDGET(paintable);
-    gtk_widget_set_visible(paintable_widget, true);
-    gtk_widget_set_visible(window, true);
+    GtkWidget *paintable_widget = gtk_picture_new_for_paintable(GDK_PAINTABLE(paintable));
 
+    // GtkWidget * paintable_widget = GTK_WIDGET(paintable);
     gtk_widget_set_size_request(paintable_widget, 400, 300);
 
     // Assign the custom paintable
     // gtk_widget_set_paintable(GTK_WIDGET(paintable_widget), GDK_PAINTABLE(paintable));
-    g_object_unref(paintable);
+    //g_object_unref(paintable);
 
     // Add the widget to the application window
     gtk_window_set_child(GTK_WINDOW(window), paintable_widget);
+
+    // gtk_widget_set_visible(paintable_widget, true);
+    // gtk_widget_set_visible(window, true);
 
     // Show the window
     gtk_window_present(GTK_WINDOW(window));
