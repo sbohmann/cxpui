@@ -147,8 +147,11 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
 
     GtkWidget *paintable_widget = gtk_picture_new_for_paintable(GDK_PAINTABLE(paintable));
 
+    // TODO this is recommended but causes a floating object finalization when the window is closed
+    // g_object_unref(paintable);
+
     // GtkWidget * paintable_widget = GTK_WIDGET(paintable);
-    gtk_widget_set_size_request(paintable_widget, 400, 300);
+    // gtk_widget_set_size_request(paintable_widget, 400, 300);
 
     // Assign the custom paintable
     // gtk_widget_set_paintable(GTK_WIDGET(paintable_widget), GDK_PAINTABLE(paintable));
