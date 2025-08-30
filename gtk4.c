@@ -88,8 +88,8 @@ static int custom_paintable_get_intrinsic_height(GdkPaintable *paintable) {
 // Initialize GdkPaintable Interface
 static void custom_paintable_interface_init(GdkPaintableInterface *iface) {
     iface->snapshot = custom_paintable_snapshot;
-    iface->get_intrinsic_width = custom_paintable_get_intrinsic_width;
-    iface->get_intrinsic_height = custom_paintable_get_intrinsic_height;
+    // iface->get_intrinsic_width = custom_paintable_get_intrinsic_width;
+    // iface->get_intrinsic_height = custom_paintable_get_intrinsic_height;
 }
 
 // Custom Paintable Class Initialization
