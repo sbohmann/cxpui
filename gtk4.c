@@ -16,7 +16,7 @@ void line(double x1, double y1, double x2, double y2) {
     double angle = atan2(dy, dx);
 
     // Create a GskTransform to translate, rotate, and scale
-    GskTransform *transform = NULL;
+    GskTransform *transform = nullptr;
     transform = gsk_transform_translate(transform, &(graphene_point_t){x1, y1});
     transform = gsk_transform_rotate(transform, angle * (180.0 / G_PI)); // Convert radians to degrees
     transform = gsk_transform_scale(transform, length, thickness);
@@ -76,20 +76,9 @@ static void custom_paintable_snapshot(GdkPaintable *paintable,
     global_snapshot = nullptr;
 }
 
-// Define Intrinsic Paintable Size
-static int custom_paintable_get_intrinsic_width(GdkPaintable *paintable) {
-    return 400; // Default width
-}
-
-static int custom_paintable_get_intrinsic_height(GdkPaintable *paintable) {
-    return 300; // Default height
-}
-
 // Initialize GdkPaintable Interface
 static void custom_paintable_interface_init(GdkPaintableInterface *iface) {
     iface->snapshot = custom_paintable_snapshot;
-    // iface->get_intrinsic_width = custom_paintable_get_intrinsic_width;
-    // iface->get_intrinsic_height = custom_paintable_get_intrinsic_height;
 }
 
 // Custom Paintable Class Initialization
@@ -176,7 +165,7 @@ void start() {
     g_signal_connect(app, "activate", G_CALLBACK(on_activate), NULL);
 
     // Run the application
-    int status = g_application_run(G_APPLICATION(app), 0, NULL);
+    int status = g_application_run(G_APPLICATION(app), 0, nullptr);
 
     // Clean up and exit
     g_object_unref(app);
