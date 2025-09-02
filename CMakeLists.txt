@@ -35,4 +35,4 @@ target_link_directories(gtk4_cxpui_backend PRIVATE /opt/homebrew/lib)
 target_link_libraries(gtk4_cxpui_backend ${GTK4_LIBRARIES})
 
 message(STATUS "GTK4_INCLUDE_DIRS: ${GTK4_INCLUDE_DIRS}")
-    message(STATUS "GTK4_LIBRARIES: ${GTK4_LIBRARIES}")
+message(STATUS "GTK4_LIBRARIES: ${GTK4_LIBRARIES}")
