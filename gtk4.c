@@ -35,7 +35,7 @@ void line(double x1, double y1, double x2, double y2) {
 
     // Free resources
     gsk_transform_unref(transform);
-    g_object_unref(node);
+    gsk_render_node_unref(node);
 }
 
 void rect(double x, double y, double w, double h) {
@@ -44,7 +44,7 @@ void rect(double x, double y, double w, double h) {
 
     GskRenderNode *node = gsk_color_node_new(&color, &rect);
     gtk_snapshot_append_node(global_snapshot, node);
-    g_object_unref(node);
+    gsk_render_node_unref(node);
 }
 
 void draw(struct Context context);
