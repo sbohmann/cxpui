@@ -37,6 +37,8 @@ target_link_libraries(gtk4_cxpui_backend ${GTK4_LIBRARIES})
 find_package(SDL3 REQUIRED)
 add_executable(sdl3_example sdl3/main.c)
 target_include_directories(sdl3_example SYSTEM PRIVATE /opt/homebrew/include)
+target_link_directories(sdl3_example PRIVATE /opt/homebrew/lib)
+target_link_libraries(sdl3_example PRIVATE SDL3)
 
 message(STATUS "GTK4_INCLUDE_DIRS: ${GTK4_INCLUDE_DIRS}")
 message(STATUS "GTK4_LIBRARIES: ${GTK4_LIBRARIES}")
