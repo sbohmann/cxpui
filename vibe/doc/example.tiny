@@ -1,0 +1,14 @@
+import GC from gc
+import MouseDownEvent from events
+
+class Example(CustomControl) {
+    mode: int32
+
+    function drawControl(gc: GC) {
+        ...
+    }
+
+    function handleMouseDown(event: MouseDownEvent) {
+        ...
+    }
+}

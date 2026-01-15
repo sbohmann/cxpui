@@ -20,7 +20,7 @@ int main() {
         speeds[i] = 1 + (random() % 5);
     }
     
-    while (1) {
+    while (true) {
         SDL_Event event;
         if (SDL_PollEvent(&event) && event.type == SDL_EVENT_QUIT) break;
         
