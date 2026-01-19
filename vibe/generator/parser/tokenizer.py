@@ -102,7 +102,7 @@ class Tokenizer:
     def __init__(self, text: str, filename: str = "<input>"):
         self.text = text
         self.filename = filename
-        self.pos = 0
+        self.source_index = 0
         self.line = 1
         self.column = 1
         self.tokens: List[Token] = []
@@ -111,16 +111,16 @@ class Tokenizer:
         return TokenPosition(self.filename, self.line, self.column)
 
     def peek(self, offset: int = 0) -> Optional[str]:
-        index = self.pos + offset
+        index = self.source_index + offset
         if index < len(self.text):
             return self.text[index]
         return None
 
     def advance(self) -> Optional[str]:
-        if self.pos >= len(self.text):
+        if self.source_index >= len(self.text):
             return None
-        char = self.text[self.pos]
-        self.pos += 1
+        char = self.text[self.source_index]
+        self.source_index += 1
         if char == '\n':
             self.line += 1
             self.column = 1
@@ -197,9 +197,9 @@ class Tokenizer:
         return IntegerLiteral(text, position)
 
     def tokenize_all(self) -> List[Token]:
-        while self.pos < len(self.text):
+        while self.source_index < len(self.text):
             self.skip_whitespace()
-            if self.pos >= len(self.text):
+            if self.source_index >= len(self.text):
                 break
 
             position = self.current_position()
