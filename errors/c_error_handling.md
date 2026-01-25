@@ -6,13 +6,15 @@ Traditionally, error handling in C works through special return values. Example:
 FILE *fopen(const char *path, const char *mode);
 ```
 
-Here, ```nullptr``` is returned if when the operation fails, and ```errno``` is set accordingly.
+Here, `NULL` is returned if when the operation fails, and `errno` is set accordingly when a failure is indicated by the return value (its value must be used / saved in a var immediately, of course, because subsequent calls may change it).
 
 Sometimes, this is fine.
 
 ## The Two Kinds of Errors
 
 Errors can be expected or unexpected.
+
+This is a distinction that can only be made when a function is called, and it entirely depends on context.
 
 When Java was created, this idea was reflected by introducing *checked exceptions* for expected errors. Unfortunately, this moved the decision about whether an error was expected to the implementation of a method.
 

@@ -7,7 +7,7 @@
 #include <string.h>
 #include <execinfo.h>
 
-constexpr int BACKTRACE_BUFFER_SIZE = 128;
+#define BACKTRACE_BUFFER_SIZE 1024
 
 static _Noreturn void print_backtrace_and_exit(void)
 {
@@ -18,7 +18,7 @@ static _Noreturn void print_backtrace_and_exit(void)
     exit(EXIT_FAILURE);
 }
 
-_Noreturn void fail()
+_Noreturn void fail(void)
 {
     fprintf(stderr, "Program execution failed.\n");
     print_backtrace_and_exit();
@@ -37,7 +37,8 @@ _Noreturn void fail_with_message(const char *format, ...)
 
 _Noreturn void fail_with_errno()
 {
-    fprintf(stderr, "Program execution failed. Errno: %d - %s\n", errno, strerror(errno));
+    int errno_value = errno;
+    fprintf(stderr, "Program execution failed. Errno: %d - %s\n", errno_value, strerror(errno_value));
     print_backtrace_and_exit();
 }
 
