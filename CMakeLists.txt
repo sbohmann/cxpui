@@ -44,3 +44,4 @@ message(STATUS "GTK4_INCLUDE_DIRS: ${GTK4_INCLUDE_DIRS}")
 message(STATUS "GTK4_LIBRARIES: ${GTK4_LIBRARIES}")
 
 add_subdirectory(vibe)
+add_subdirectory(errors)
