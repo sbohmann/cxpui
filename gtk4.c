@@ -47,7 +47,7 @@ void rect(double x, double y, double w, double h) {
     gsk_render_node_unref(node);
 }
 
-void draw(struct Context context);
+void draw(struct GraphicsContext context);
 
 typedef struct {
     GtkWidget parent_instance;
@@ -64,7 +64,7 @@ static void custom_paintable_snapshot(GdkPaintable *paintable,
                                       GtkSnapshot *snapshot,
                                       double width,
                                       double height) {
-    struct Context context = {width, height};
+    struct GraphicsContext context = {width, height};
 
     // Set global snapshot for use in helper functions
     global_snapshot = snapshot;

@@ -19,14 +19,14 @@ void rect(double x, double y, double w, double h) {
     cairo_fill(global_cr);  // Fill the rectangle with the current color
 }
 
-void draw(struct Context context);
+void draw(struct GraphicsContext context);
 
 static void draw_callback(GtkDrawingArea *drawing_area,
          cairo_t        *cr,
          int             width,
          int             height,
          gpointer        data) {
-    struct Context context = {width, height};
+    struct GraphicsContext context = {width, height};
 
     // Replace AppKit-specific logic with GTK rendering
     global_cr = cr;  // Equivalent to CGContext

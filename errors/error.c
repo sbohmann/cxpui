@@ -6,6 +6,7 @@
 #include <errno.h>
 #include <string.h>
 #include <execinfo.h>
+#include <unistd.h>
 
 #define BACKTRACE_BUFFER_SIZE 1024
 
@@ -14,7 +15,7 @@ static _Noreturn void print_backtrace_and_exit(void)
     void *buffer[BACKTRACE_BUFFER_SIZE];
     int backtrace_length = backtrace(buffer, BACKTRACE_BUFFER_SIZE);
     fprintf(stderr, "Backtrace:\n");
-    backtrace_symbols_fd(buffer, backtrace_length, fileno(stderr));
+    backtrace_symbols_fd(buffer, backtrace_length, STDERR_FILENO);
     exit(EXIT_FAILURE);
 }
 
@@ -42,7 +43,24 @@ _Noreturn void fail_with_errno()
     print_backtrace_and_exit();
 }
 
-int main()
-{
-    fail_with_message("The numbers are %d and %d", 5, 7);
-}
+// struct error *error(const char *format, ...)
+// {
+//     struct error *result = malloc(sizeof(struct error));
+//     if (result == NULL)
+//     {
+//         fail_with_message("Failed to allocate struct error of size ", sizeof(struct error));
+//     }
+//     *result = (struct error) {
+//         .error_message =
+//     };
+// }
+//
+// void error_delete(const struct error *error)
+// {
+//
+// }
+//
+// int main()
+// {
+//     fail_with_message("The numbers are %d and %d", 5, 7);
+// }
