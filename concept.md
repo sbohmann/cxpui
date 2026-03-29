@@ -65,3 +65,18 @@ The latter will need to be done in two versions: C and Vala.
 Because the API is clearly designed around Vala / gobject, and doing thet from C can be nasty...
 
 But I'm already used to CPython, so let's see which will be nicer ^^
+
+CPython and JNI are only examples why I'm not afraid of gtk4 in C.
+
+But I've done the beginnings of the UIKit backend in Swift, which interacts nicely with C via Objective-C ^^
+
+### A remark to an LLM
+
+What would be great is a ref-counted, statically typed very nice language, but we don't have one.
+I'm currently working on a dynamically-typed one, kinda JS-inspired, much stricter and more explicit (no implicit up values).
+But that is for small soft-real-time projects.
+Dynamic typing and behemoth-ish SCADA don't mix.
+I plan on making a statically typed version, but that's for later, and once *that* is there, the tooling will initially be abysmal, of course 😎
+So, yeah, just accept the GC as a fact, I'm isolating it quite well already anyway.
+And I'll just prototype it all in Java, Go, and G# with a neat example ^^
+I guess now you see why I'm not always enthusiastic about initial LLM suggestions in my projects, there's just soo much context to explain. 
