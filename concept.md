@@ -54,3 +54,14 @@ In binding languages, wrapper objects only control access; they are not the sour
 Beyond the C core, I'll do UIKit and JVM first, and then let the LLM fill in Pythn, Gtk4...
 
 Once there is already a code base, soo many fewer questions.
+
+### Two things will be especially fascinating for LLM generation
+
+- Built-in file picker (will need to have ifdef includes for posix / win32, of course).
+- And the Gtk4 backend...
+
+The latter will need to be done in two versions: C and Vala.
+
+Because the API is clearly designed around Vala / gobject, and doing thet from C can be nasty...
+
+But I'm already used to CPython, so let's see which will be nicer ^^
