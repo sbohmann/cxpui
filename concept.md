@@ -48,3 +48,9 @@ In, e.g., Java, the wrapper just will throw when accessing, as it doesn't have a
 CXPUI uses deterministic native ownership instead of GC-driven resource cleanup. UI objects may be owned by the view graph and/or held by user code, and they are released immediately when neither condition applies. This avoids relying on finalizers or runtime memory pressure to free large native resources such as image buffers, textures, or platform widgets.
 
 In binding languages, wrapper objects only control access; they are not the source of truth for lifetime. This keeps the API predictable, binding-friendly, and safe for long-running applications.
+
+## Plan as of now
+
+Beyond the C core, I'll do UIKit and JVM first, and then let the LLM fill in Pythn, Gtk4...
+
+Once there is already a code base, soo many fewer questions.
