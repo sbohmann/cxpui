@@ -7,7 +7,7 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK4 REQUIRED gtk4)
 
 add_executable(swift_cxpui main.c)
-add_library(swift_cxpui_backend AppDelegate.swift)
+add_library(swift_cxpui_backend AppDelegate.m)
 set_target_properties(swift_cxpui PROPERTIES
         MACOSX_BUNDLE TRUE
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/Info.plist"

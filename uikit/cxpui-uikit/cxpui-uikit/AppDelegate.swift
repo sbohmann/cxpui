@@ -41,9 +41,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
 // Custom NSView for custom paint logic
 class CustomView: NSView {
-    var drawFunction: ((Context) -> Void)!
+    var drawFunction: ((GraphicsContext) -> Void)!
 
-    func setDrawFunction(drawFunction: @escaping (Context) -> Void) {
+    func setDrawFunction(drawFunction: @escaping (GraphicsContext) -> Void) {
         self.drawFunction = drawFunction
     }
 
@@ -66,7 +66,7 @@ class CustomView: NSView {
         context.fill(bounds)
 
         self.drawFunction(
-            Context(
+            GraphicsContext(
                 width: bounds.size.width,
                 height: bounds.size.height))
     }
@@ -77,11 +77,22 @@ var globalContext: CGContext! = nil
 var globalBounds: CGRect!
 
 @_cdecl("start")
-func start() {
+func start() -> UnsafeMutablePointer<Handle> {
     let app = NSApplication.shared
     delegate = AppDelegate()
     app.delegate = delegate
     app.run()
+    let context = Unmanaged.passUnretained(delegate).toOpaque()
+    let view = NativeView_create(context)
+    return view!.pointee.base.handle
+}
+
+@_cdecl("NativeView_create")
+func createCustomView() -> UnsafeMutablePointer<CustomView>? {
+    let instance = CustomView()
+    let ptr = UnsafeMutablePointer<CustomView>.allocate(capacity: 1)
+    ptr.initialize(to: instance)
+    return ptr
 }
 
 @_cdecl("line")
@@ -100,4 +111,4 @@ func rect(x: CGFloat, y: CGFloat, w: CGFloat, h: CGFloat) {
 }
 
 @_silgen_name("draw")
-func draw(context: Context)
+func draw(context: GraphicsContext)
