@@ -6,7 +6,7 @@ set(CMAKE_C_STANDARD 23)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK4 REQUIRED gtk4)
 
-add_executable(swift_cxpui main.c)
+add_executable(swift_cxpui main.c cxpui.c)
 add_library(swift_cxpui_backend AppDelegate.m)
 set_target_properties(swift_cxpui PROPERTIES
         MACOSX_BUNDLE TRUE

@@ -8,10 +8,12 @@ struct GraphicsContext {
     double height;
 };
 
+// These numeric values are just guards against random / zero initialization
 enum ViewType {
-    CompositeView,
-    CustomView,
-    NativeView
+    CompositeView = 0x557a5bd49e199c91,
+    CustomView = 0x5fba0d31c9ca5308,
+    NativeView = 0xc739750fb1c91eff,
+    Window = 0x1dce1c7d57b5290f
 };
 
 struct View {
@@ -27,14 +29,16 @@ struct CompositeView {
     struct View base;
 };
 
-struct View * View_create();
+struct View * View_create(void);
+
+struct Window * View_as_window(struct View *view);
 
 struct CustomView {
     struct View base;
     void (*paint)(struct GraphicsContext *context, struct Handle *handle);
 };
 
-struct CustomView * CustomView_create();
+struct CustomView * CustomView_create(void);
 
 struct NativeView {
     struct View base;
@@ -42,6 +46,16 @@ struct NativeView {
 };
 
 struct NativeView * NativeView_create(void *native_instance);
+
+struct Window {
+    struct View base;
+    void *native_instance;
+    struct View *mainView;
+};
+
+struct Window * Window_create(void *native_instance);
+
+void Window_set_main_view(struct Window *window, struct View *view);
 
 struct Handle {
     struct View *instance;

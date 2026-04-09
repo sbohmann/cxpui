@@ -83,16 +83,21 @@ func start() -> UnsafeMutablePointer<Handle> {
     app.delegate = delegate
     app.run()
     let context = Unmanaged.passUnretained(delegate).toOpaque()
-    let view = NativeView_create(context)
+    let view = Window_create(context)
     return view!.pointee.base.handle
 }
 
-@_cdecl("NativeView_create")
-func createCustomView() -> UnsafeMutablePointer<CustomView>? {
-    let instance = CustomView()
-    let ptr = UnsafeMutablePointer<CustomView>.allocate(capacity: 1)
-    ptr.initialize(to: instance)
+@_cdecl("Window_create")
+func createWindow() -> UnsafeMutablePointer<Window>? {
+    let window = Window()
+    let ptr = UnsafeMutablePointer<Window>.allocate(capacity: 1)
+    ptr.initialize(to: window)
     return ptr
+}
+
+@_cdecl("Window_set_main_view")
+func setMainView(window: UnsafeMutablePointer<Window>, view: UnsafeMutablePointer<View>) {
+    window.pointee.mainView = view
 }
 
 @_cdecl("line")
