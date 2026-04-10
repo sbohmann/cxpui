@@ -82,7 +82,7 @@ func start() -> UnsafeMutablePointer<Handle> {
     delegate = AppDelegate()
     app.delegate = delegate
     app.run()
-    let context = Unmanaged.passUnretained(delegate).toOpaque()
+    let context = Unmanaged.passRetained(delegate).toOpaque()
     let view = Window_create(context)
     return view!.pointee.base.handle
 }
