@@ -1,14 +1,12 @@
 import AppKit
 
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
-    var window: NSWindow!
-    var windowView: WindowView!
+    var window: NSWindow?
+    var windowView: WindowView?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Activate the application
         NSApplication.shared.activate(ignoringOtherApps: true)
-
-        window.delegate = self
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
@@ -77,6 +75,7 @@ func createWindow() -> UnsafeMutablePointer<Window>? {
     )
     window.title = "cxpui Appkit Window"
     window.center()
+    window.delegate = globalAppdelegate
     window.makeKeyAndOrderFront(nil)
 
     let windowView = WindowView(frame: window.contentView?.bounds ?? NSRect.zero)
