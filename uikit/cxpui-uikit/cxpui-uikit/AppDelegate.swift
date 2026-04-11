@@ -2,7 +2,7 @@ import AppKit
 
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     var window: NSWindow!
-    var customView: CustomView!
+    var windowView: WindowView!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         let screenRect = NSScreen.main?.frame ?? NSRect()
@@ -22,11 +22,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         window.center()
         window.makeKeyAndOrderFront(nil)
 
-        // Add the custom drawing view
-        customView = CustomView(frame: window.contentView?.bounds ?? NSRect.zero)
-        customView.autoresizingMask = [.width, .height]  // Resize the view with the window
-        customView.drawFunction = draw
-        window.contentView?.addSubview(customView)
+        windowView = WindowView(frame: window.contentView?.bounds ?? NSRect.zero)
+        windowView.autoresizingMask = [.width, .height]  // Resize the view with the window
+        windowView.drawFunction = draw
+        window.contentView?.addSubview(windowView)
 
         // Activate the application
         NSApplication.shared.activate(ignoringOtherApps: true)
@@ -39,8 +38,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 }
 
-// Custom NSView for custom paint logic
-class CustomView: NSView {
+class WindowView: NSView {
     var drawFunction: ((GraphicsContext) -> Void)!
 
     func setDrawFunction(drawFunction: @escaping (GraphicsContext) -> Void) {

@@ -5,6 +5,7 @@ struct Handle * start(void);
 int main(void) {
     struct Handle *mainWindowHandle = start();
     struct Window *mainWindow = View_as_window(mainWindowHandle->instance);
+
 }
 
 void line(double x1, double y1, double x2, double y2);
