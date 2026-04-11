@@ -5,7 +5,8 @@ struct Handle * start(void);
 int main(void) {
     struct Handle *mainWindowHandle = start();
     struct Window *mainWindow = View_as_window(mainWindowHandle->instance);
-
+    struct CustomView *demoView = CustomView_create();
+    Window_set_main_view(mainWindow, (struct View *) demoView);
 }
 
 void line(double x1, double y1, double x2, double y2);
