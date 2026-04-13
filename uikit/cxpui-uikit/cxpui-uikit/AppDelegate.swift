@@ -48,18 +48,20 @@ var globalAppdelegate: AppDelegate! = nil
 //var globalBounds: CGRect
 
 @_cdecl("start")
-func start() -> UnsafeMutablePointer<Handle> {
+func start() -> UnsafeMutablePointer<Window> {
     let app = NSApplication.shared
     globalAppdelegate = AppDelegate()
     app.delegate = globalAppdelegate
-    app.run()
-    let context = Unmanaged.passRetained(globalAppdelegate).toOpaque()
-    let view = Window_create(context)
-    return view!.pointee.base.handle
+    let view = createWindow()
+    return view
 }
 
-@_cdecl("Window_create")
-func createWindow() -> UnsafeMutablePointer<Window>? {
+@_cdecl("Application_run")
+func run() {
+    NSApplication.shared.run()
+}
+
+func createWindow() -> UnsafeMutablePointer<Window> {
     let screenRect = NSScreen.main?.frame ?? NSRect()
     
     let window = NSWindow(
@@ -81,7 +83,9 @@ func createWindow() -> UnsafeMutablePointer<Window>? {
     let windowView = WindowView(frame: window.contentView?.bounds ?? NSRect.zero)
     windowView.autoresizingMask = [.width, .height]
     window.contentView?.addSubview(windowView)
-    let cxpuiWindow = Window()
+    var cxpuiWindow = Window()
+    cxpuiWindow.mainView = nil
+    cxpuiWindow.native_instance = Unmanaged.passRetained(window).toOpaque()
     let cxpuiWindowPointer = UnsafeMutablePointer<Window>.allocate(capacity: 1)
     cxpuiWindowPointer.initialize(to: cxpuiWindow)
     return cxpuiWindowPointer

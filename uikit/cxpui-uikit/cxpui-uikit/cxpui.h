@@ -29,6 +29,10 @@ struct CompositeView {
     struct View base;
 };
 
+struct Window * start(void);
+
+void Application_run(void);
+
 struct View * View_create(void);
 
 struct Window * View_as_window(struct View *view);

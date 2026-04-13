@@ -1,5 +1,7 @@
 #include "cxpui.h"
 
+#include <stdlib.h>
+
 #include "errors/error.h"
 
 const char * ViewType_to_string(enum ViewType type) {
@@ -24,4 +26,10 @@ struct Window * View_as_window(struct View *view) {
             view->type);
     }
     return (struct Window *)view;
+}
+
+struct CustomView * CustomView_create() {
+    struct CustomView *result = (struct CustomView *) malloc(sizeof(struct CustomView));
+    *result = (struct CustomView) {};
+    return result;
 }
