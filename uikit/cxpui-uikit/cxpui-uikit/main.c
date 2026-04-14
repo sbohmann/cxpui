@@ -1,8 +1,11 @@
 #include "cxpui.h"
 
+void draw(struct GraphicsContext context);
+
 int main(void) {
     struct Window *mainWindow = start();
     struct CustomView *demoView = CustomView_create();
+    demoView->paint = &draw;
     Window_set_main_view(mainWindow, (struct View *) demoView);
     Application_run();
 }

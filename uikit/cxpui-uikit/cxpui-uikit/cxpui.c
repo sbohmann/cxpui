@@ -31,5 +31,6 @@ struct Window * View_as_window(struct View *view) {
 struct CustomView * CustomView_create() {
     struct CustomView *result = (struct CustomView *) malloc(sizeof(struct CustomView));
     *result = (struct CustomView) {};
+    result->base.type = CustomView;
     return result;
 }

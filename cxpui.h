@@ -39,7 +39,7 @@ struct Window * View_as_window(struct View *view);
 
 struct CustomView {
     struct View base;
-    void (*paint)(struct GraphicsContext *context, struct Handle *handle);
+    void (*paint)(struct GraphicsContext context);
 };
 
 struct CustomView * CustomView_create(void);

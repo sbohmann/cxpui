@@ -5,7 +5,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     var windowView: WindowView?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // Activate the application
         NSApplication.shared.activate(ignoringOtherApps: true)
     }
 
@@ -20,40 +19,38 @@ class WindowView: NSView {
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
 
-        // Your custom drawing logic here
         guard let context = NSGraphicsContext.current?.cgContext else { return }
-
-        let graphicsContext = context
+        globalContext = context
+        
         let bounds = bounds
-
-        // Clear the background with white color
+        
         NSColor.white.setFill()
         context.fill(bounds)
         
-//        if let win = self.cxpuiWindow {
-////            if win.pointee.base.type == CustomView {
-////                
-////            }
-////            if cxpuiWindow?.pointee.base.type
-////            self.drawFunction(
-////                GraphicsContext(
-////                    width: bounds.size.width,
-////                    height: bounds.size.height))
-//        }
+        if let win = self.cxpuiWindow {
+            if win.pointee.mainView.pointee.type == CustomView {
+                win.pointee.mainView.withMemoryRebound(to: CustomView.self, capacity: 1) {
+                    customViewPointer in
+                    customViewPointer.pointee.paint(
+                        GraphicsContext(
+                            width: bounds.size.width,
+                            height: bounds.size.height))
+                }
+            }
+        }
     }
 }
 
 var globalAppdelegate: AppDelegate! = nil
-//var globalContext: CGContext = nil
-//var globalBounds: CGRect
+var globalContext: CGContext! = nil
 
 @_cdecl("start")
 func start() -> UnsafeMutablePointer<Window> {
     let app = NSApplication.shared
     globalAppdelegate = AppDelegate()
     app.delegate = globalAppdelegate
-    let view = createWindow()
-    return view
+    let window = createWindow()
+    return window
 }
 
 @_cdecl("Application_run")
@@ -88,6 +85,7 @@ func createWindow() -> UnsafeMutablePointer<Window> {
     cxpuiWindow.native_instance = Unmanaged.passRetained(window).toOpaque()
     let cxpuiWindowPointer = UnsafeMutablePointer<Window>.allocate(capacity: 1)
     cxpuiWindowPointer.initialize(to: cxpuiWindow)
+    windowView.cxpuiWindow = cxpuiWindowPointer
     return cxpuiWindowPointer
 }
 
@@ -98,17 +96,17 @@ func setMainView(window: UnsafeMutablePointer<Window>, view: UnsafeMutablePointe
 
 @_cdecl("line")
 func line(x1: CGFloat, y1: CGFloat, x2: CGFloat, y2: CGFloat) {
-//    NSColor.blue.setStroke()
-//    globalContext.setLineWidth(2)
-//    globalContext.move(to: CGPoint(x: x1, y: y1))
-//    globalContext.addLine(to: CGPoint(x: x2, y: y2))
-//    globalContext.strokePath()
+    NSColor.blue.setStroke()
+    globalContext.setLineWidth(2)
+    globalContext.move(to: CGPoint(x: x1, y: y1))
+    globalContext.addLine(to: CGPoint(x: x2, y: y2))
+    globalContext.strokePath()
 }
 
 @_cdecl("rect")
 func rect(x: CGFloat, y: CGFloat, w: CGFloat, h: CGFloat) {
-//    NSColor.red.setFill()
-//    globalContext.fill(NSRect(x: x, y: y, width: w, height: h))
+    NSColor.red.setFill()
+    globalContext.fill(NSRect(x: x, y: y, width: w, height: h))
 }
 
 @_silgen_name("draw")
