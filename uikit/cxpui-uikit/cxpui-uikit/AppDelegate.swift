@@ -34,7 +34,8 @@ class WindowView: NSView {
                     customViewPointer.pointee.paint(
                         GraphicsContext(
                             width: bounds.size.width,
-                            height: bounds.size.height))
+                            height: bounds.size.height,
+                            native_context: Unmanaged.passRetained(context).toOpaque()))
                 }
             }
         }
@@ -82,7 +83,7 @@ func createWindow() -> UnsafeMutablePointer<Window> {
     window.contentView?.addSubview(windowView)
     var cxpuiWindow = Window()
     cxpuiWindow.mainView = nil
-    cxpuiWindow.native_instance = Unmanaged.passRetained(window).toOpaque()
+    cxpuiWindow.native_view = Unmanaged.passRetained(window).toOpaque()
     let cxpuiWindowPointer = UnsafeMutablePointer<Window>.allocate(capacity: 1)
     cxpuiWindowPointer.initialize(to: cxpuiWindow)
     windowView.cxpuiWindow = cxpuiWindowPointer

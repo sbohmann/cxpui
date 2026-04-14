@@ -6,6 +6,7 @@
 struct GraphicsContext {
     double width;
     double height;
+    void *native_context;
 };
 
 // These numeric values are just guards against random / zero initialization
@@ -46,23 +47,23 @@ struct CustomView * CustomView_create(void);
 
 struct NativeView {
     struct View base;
-    void *native_instance;
+    void *native_view;
 };
 
-struct NativeView * NativeView_create(void *native_instance);
+struct NativeView * NativeView_create(void *native_view);
 
 struct Window {
     struct View base;
-    void *native_instance;
+    void *native_view;
     struct View *mainView;
 };
 
-struct Window * Window_create(void *native_instance);
+struct Window * Window_create(void *native_view);
 
 void Window_set_main_view(struct Window *window, struct View *view);
 
 struct Handle {
-    struct View *instance;
+    struct View *view;
     void *holder_context;
     bool owned; // Owned by another view as part of the view graph
     bool held; // Held from user space, i.e., not released
