@@ -14,6 +14,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 }
 
 class WindowView: NSView {
+    var appDelegate: AppDelegate?
     var cxpuiWindow: UnsafeMutablePointer<Window>?
     
     override func draw(_ dirtyRect: NSRect) {
@@ -41,14 +42,12 @@ class WindowView: NSView {
     }
 }
 
-var globalAppdelegate: AppDelegate! = nil
-
 @_cdecl("start")
 func start() -> UnsafeMutablePointer<Window> {
     let app = NSApplication.shared
-    globalAppdelegate = AppDelegate()
-    app.delegate = globalAppdelegate
-    let window = createWindow()
+    let appDelegate = AppDelegate()
+    app.delegate = appDelegate
+    let window = createWindow(appDelegate: appDelegate)
     return window
 }
 
@@ -57,7 +56,7 @@ func run() {
     NSApplication.shared.run()
 }
 
-func createWindow() -> UnsafeMutablePointer<Window> {
+func createWindow(appDelegate: AppDelegate) -> UnsafeMutablePointer<Window> {
     let screenRect = NSScreen.main?.frame ?? NSRect()
     
     let window = NSWindow(
@@ -73,7 +72,7 @@ func createWindow() -> UnsafeMutablePointer<Window> {
     )
     window.title = "cxpui Appkit Window"
     window.center()
-    window.delegate = globalAppdelegate
+    window.delegate = appDelegate
     window.makeKeyAndOrderFront(nil)
 
     let windowView = WindowView(frame: window.contentView?.bounds ?? NSRect.zero)
