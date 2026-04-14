@@ -68,3 +68,7 @@ struct Handle {
     bool owned; // Owned by another view as part of the view graph
     bool held; // Held from user space, i.e., not released
 };
+
+void line(struct GraphicsContext gc, double x1, double y1, double x2, double y2);
+
+void rect(struct GraphicsContext gc, double x, double y, double w, double h);

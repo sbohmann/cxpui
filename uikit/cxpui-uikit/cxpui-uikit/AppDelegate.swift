@@ -20,7 +20,6 @@ class WindowView: NSView {
         super.draw(dirtyRect)
 
         guard let context = NSGraphicsContext.current?.cgContext else { return }
-        globalContext = context
         
         let bounds = bounds
         
@@ -43,7 +42,6 @@ class WindowView: NSView {
 }
 
 var globalAppdelegate: AppDelegate! = nil
-var globalContext: CGContext! = nil
 
 @_cdecl("start")
 func start() -> UnsafeMutablePointer<Window> {
@@ -96,18 +94,20 @@ func setMainView(window: UnsafeMutablePointer<Window>, view: UnsafeMutablePointe
 }
 
 @_cdecl("line")
-func line(x1: CGFloat, y1: CGFloat, x2: CGFloat, y2: CGFloat) {
+func line(gc: GraphicsContext, x1: CGFloat, y1: CGFloat, x2: CGFloat, y2: CGFloat) {
+    let nativeContext = Unmanaged<CGContext>.fromOpaque(gc.native_context).takeUnretainedValue()
     NSColor.blue.setStroke()
-    globalContext.setLineWidth(2)
-    globalContext.move(to: CGPoint(x: x1, y: y1))
-    globalContext.addLine(to: CGPoint(x: x2, y: y2))
-    globalContext.strokePath()
+    nativeContext.setLineWidth(2)
+    nativeContext.move(to: CGPoint(x: x1, y: y1))
+    nativeContext.addLine(to: CGPoint(x: x2, y: y2))
+    nativeContext.strokePath()
 }
 
 @_cdecl("rect")
-func rect(x: CGFloat, y: CGFloat, w: CGFloat, h: CGFloat) {
+func rect(gc: GraphicsContext, x: CGFloat, y: CGFloat, w: CGFloat, h: CGFloat) {
+    let nativeContext = Unmanaged<CGContext>.fromOpaque(gc.native_context).takeUnretainedValue()
     NSColor.red.setFill()
-    globalContext.fill(NSRect(x: x, y: y, width: w, height: h))
+    nativeContext.fill(NSRect(x: x, y: y, width: w, height: h))
 }
 
 @_silgen_name("draw")

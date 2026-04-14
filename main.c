@@ -10,10 +10,6 @@ int main(void) {
     Application_run();
 }
 
-void line(double x1, double y1, double x2, double y2);
-
-void rect(double x, double y, double w, double h);
-
 int get_num_steps(struct GraphicsContext context) {
     int num_x_steps = (int) (context.width / 10);
     int num_y_steps = (int) (context.height / 10);
@@ -25,10 +21,10 @@ void draw(struct GraphicsContext context) {
     for (int index = 0; index <= num_steps; ++index) {
         double x = index * context.width / num_steps;
         double y = index * context.height / num_steps;
-        line(x, 0, context.width, y);
-        line(x, context.height, context.width, context.height - y);
-        line(context.width - x, 0, 0, y);
-        line(context.width - x, context.height, 0, context.height - y);
+        line(context, x, 0, context.width, y);
+        line(context, x, context.height, context.width, context.height - y);
+        line(context, context.width - x, 0, 0, y);
+        line(context, context.width - x, context.height, 0, context.height - y);
     }
-    rect(context.width / 3.0, context.height / 3.0, context.width / 3.0, context.height / 3.0);
+    rect(context, context.width / 3.0, context.height / 3.0, context.width / 3.0, context.height / 3.0);
 }
