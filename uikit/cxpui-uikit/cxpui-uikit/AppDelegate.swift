@@ -19,7 +19,8 @@ class WindowView: NSView {
     
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
-
+        
+        // TODO find the best way to maybe bring along the graphics context through CompositeView rendering
         guard let context = NSGraphicsContext.current?.cgContext else { return }
         
         let bounds = bounds
@@ -28,18 +29,27 @@ class WindowView: NSView {
         context.fill(bounds)
         
         if let win = self.cxpuiWindow {
-            if win.pointee.mainView.pointee.type == CustomView {
-                win.pointee.mainView.withMemoryRebound(to: CustomView.self, capacity: 1) {
-                    customViewPointer in
-                    customViewPointer.pointee.paint(
-                        GraphicsContext(
-                            width: bounds.size.width,
-                            height: bounds.size.height,
-                            native_context: Unmanaged.passRetained(context).toOpaque()))
-                }
-            } else if win.pointee.mainView.pointee.type == CompositeView {
-                
+            let view = win.pointee.mainView
+            if view != nil {
+                drawView(view: view!)
             }
+        }
+    }
+    
+    func drawView(view: UnsafeMutablePointer<View>) {
+        guard let context = NSGraphicsContext.current?.cgContext else { return }
+
+        if view.pointee.type == CustomView {
+            view.withMemoryRebound(to: CustomView.self, capacity: 1) {
+                customViewPointer in
+                customViewPointer.pointee.paint(
+                    GraphicsContext(
+                        width: bounds.size.width,
+                        height: bounds.size.height,
+                        native_context: Unmanaged.passRetained(context).toOpaque()))
+            }
+        } else if view.pointee.type == CompositeView {
+            
         }
     }
 }

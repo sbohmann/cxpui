@@ -65,25 +65,3 @@ _Noreturn void fail_with_message_and_errno(const char *format, ...) {
     }
     fail();
 }
-
-// struct error *error(const char *format, ...)
-// {
-//     struct error *result = malloc(sizeof(struct error));
-//     if (result == NULL)
-//     {
-//         fail_with_message("Failed to allocate struct error of size ", sizeof(struct error));
-//     }
-//     *result = (struct error) {
-//         .error_message =
-//     };
-// }
-//
-// void error_delete(const struct error *error)
-// {
-//
-// }
-//
-// int main()
-// {
-//     fail_with_message("The numbers are %d and %d", 5, 7);
-// }

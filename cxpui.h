@@ -26,17 +26,18 @@ struct View {
     struct Handle *handle;
 };
 
-struct CompositeView {
-    struct View base;
-};
-
 struct Window * start(void);
 
 void Application_run(void);
 
-struct View * View_create(void);
-
 struct Window * View_as_window(struct View *view);
+
+struct CompositeView {
+    struct View base;
+    struct ViewList *sub_views;
+};
+
+struct CompositeView * CompositeView_create(void);
 
 struct CustomView {
     struct View base;

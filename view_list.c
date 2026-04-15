@@ -5,16 +5,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "core.h"
 #include "errors/error.h"
 
 struct ViewList {
-    struct ModuleState ** data;
+    struct View ** data;
     size_t size;
     size_t capacity;
 };
 
 struct ViewList * ViewList_create(void) {
-    struct ViewList *self = malloc(sizeof(struct ViewList));
+    struct ViewList *self = allocate(sizeof(struct ViewList));
     *self = (struct ViewList) {
         NULL,
         0,
@@ -32,22 +33,22 @@ size_t ViewList_size(struct ViewList const *self) {
     return self->size;
 }
 
-struct ModuleState * ViewList_get(struct ViewList const *self, size_t index) {
+struct View * ViewList_get(struct ViewList const *self, size_t index) {
     if (index >= self->size) {
         fail_with_message("Index out of bounds [%zu] at size %zu", index, self->size);
     }
     return self->data[index];
 }
 
-void ViewList_add(struct ViewList *self, struct ModuleState *newElement) {
+void ViewList_add(struct ViewList *self, struct View *newElement) {
     if (self->size < self->capacity) {
         self->data[self->size] = newElement;
         ++self->size;
     } else {
         const size_t new_capacity = self->capacity * 3 / 2 + 1;
-        struct ModuleState ** new_data = malloc(sizeof(struct ModuleState *) * new_capacity);
+        struct View ** new_data = allocate(sizeof(struct View *) * new_capacity);
         if (self->data != NULL) {
-            memcpy(new_data, self->data, sizeof(struct ModuleState *) * self->size);
+            memcpy(new_data, self->data, sizeof(struct View *) * self->size);
             free(self->data);
         }
         new_data[self->size] = newElement;

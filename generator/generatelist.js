@@ -42,6 +42,7 @@ void ${definition.typeName}_print(struct ${definition.typeName} *self);
 #include <stdlib.h>
 #include <string.h>
 
+#include "core.h"
 #include "errors/error.h"
 
 struct ${definition.typeName} {

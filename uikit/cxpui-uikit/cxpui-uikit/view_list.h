@@ -14,9 +14,9 @@ void ViewList_delete(struct ViewList *self);
 
 size_t ViewList_size(struct ViewList const *self);
 
-struct ModuleState * ViewList_get(struct ViewList const *self, size_t index);
+struct View * ViewList_get(struct ViewList const *self, size_t index);
 
-void ViewList_add(struct ViewList *self, struct ModuleState *newElement);
+void ViewList_add(struct ViewList *self, struct View *newElement);
 
 void ViewList_print(struct ViewList *self);
 

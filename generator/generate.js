@@ -9,7 +9,7 @@ if (!fs.existsSync(outputDirectory)) {
 generateList({
     fileName: 'view_list',
     typeName: 'ViewList',
-    elementTypeName: 'ModuleState',
+    elementTypeName: 'View',
     localIncludes: ['cxpui.h'],
     isStruct: true
 }, outputDirectory)
