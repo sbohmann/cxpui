@@ -36,6 +36,13 @@ struct CompositeView * CompositeView_create(void) {
     return result;
 }
 
+void CompositeView_paint(
+    struct CompositeView *self,
+    void *context,
+    void (*native_paint_view)(void *context, struct View *view)) {
+    
+}
+
 struct CustomView * CustomView_create() {
     struct CustomView *result = allocate(sizeof(struct CustomView));
     *result = (struct CustomView) {};

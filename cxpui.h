@@ -35,10 +35,14 @@ struct Window * View_as_window(struct View *view);
 struct CompositeView {
     struct View base;
     struct ViewList *sub_views;
-    void (*paint)(void *context, void (*native_paint_view)(void *context, struct View *view));
 };
 
 struct CompositeView * CompositeView_create(void);
+
+void CompositeView_paint(
+    struct CompositeView *self,
+    void *context,
+    void (*native_paint_view)(void *context, struct View *view));
 
 struct CustomView {
     struct View base;
