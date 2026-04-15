@@ -51,7 +51,12 @@ class WindowView: NSView {
         } else if view.pointee.type == CompositeView {
             view.withMemoryRebound(to: CompositeView.self, capacity: 1) {
                 compositeViewPointer in
-                compositeViewPointer.pointee.paint(Unmanaged.passRetained(self).toOpaque())
+                compositeViewPointer.pointee.paint(Unmanaged.passRetained(self).toOpaque()) {
+                    windowViewPointer, viewPointer in
+                    guard let windowView = windowViewPointer else { return }
+                    let instance = Unmanaged<WindowView>.fromOpaque(windowView).takeUnretainedValue()
+                    instance.drawView(view: viewPointer!)
+                }
             }
         }
     }
