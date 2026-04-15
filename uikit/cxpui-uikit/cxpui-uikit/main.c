@@ -1,12 +1,15 @@
 #include "cxpui.h"
+#include "view_list.h"
 
 void draw_demo_view(struct GraphicsContext context);
 
 int main(void) {
     struct Window *mainWindow = start();
+    struct CompositeView *mainView = CompositeView_create();
     struct CustomView *demoView = CustomView_create();
     demoView->paint = &draw_demo_view;
-    Window_set_main_view(mainWindow, (struct View *) demoView);
+    ViewList_add(mainView->sub_views, (struct View *) demoView);
+    Window_set_main_view(mainWindow, (struct View *) mainView);
     Application_run();
 }
 
