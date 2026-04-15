@@ -49,7 +49,10 @@ class WindowView: NSView {
                         native_context: Unmanaged.passRetained(context).toOpaque()))
             }
         } else if view.pointee.type == CompositeView {
-            
+            view.withMemoryRebound(to: CompositeView.self, capacity: 1) {
+                compositeViewPointer in
+                compositeViewPointer.pointee.paint(Unmanaged.passRetained(self).toOpaque())
+            }
         }
     }
 }
