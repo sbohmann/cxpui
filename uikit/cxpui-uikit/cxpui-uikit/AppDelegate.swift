@@ -37,6 +37,8 @@ class WindowView: NSView {
                             height: bounds.size.height,
                             native_context: Unmanaged.passRetained(context).toOpaque()))
                 }
+            } else if win.pointee.mainView.pointee.type == CompositeView {
+                
             }
         }
     }

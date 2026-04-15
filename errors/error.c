@@ -10,6 +10,16 @@
 
 #define BACKTRACE_BUFFER_SIZE 1024
 
+#define PRINT(format) \
+    va_list arguments; \
+    va_start(arguments, (format)); \
+    vfprintf(stderr, (format), arguments); \
+    va_end(arguments);
+
+static void newline(void) {
+    fputc('\n', stderr);
+}
+
 static _Noreturn void print_backtrace_and_exit(void)
 {
     void *buffer[BACKTRACE_BUFFER_SIZE];
@@ -41,6 +51,19 @@ _Noreturn void fail_with_errno()
     int errno_value = errno;
     fprintf(stderr, "Program execution failed. Errno: %d - %s\n", errno_value, strerror(errno_value));
     print_backtrace_and_exit();
+}
+
+_Noreturn void fail_with_message_and_errno(const char *format, ...) {
+    fflush(stdout);
+    fprintf(stderr, "Failed with errno: %d - %s\n", errno, strerror(errno));
+    if (format) {
+        fputs("Reason: ", stderr);
+        PRINT(format)
+        newline();
+    } else {
+        fprintf(stderr, "fail was called.");
+    }
+    fail();
 }
 
 // struct error *error(const char *format, ...)
