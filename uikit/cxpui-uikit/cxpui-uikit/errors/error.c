@@ -5,10 +5,16 @@
 #include <stdarg.h>
 #include <errno.h>
 #include <string.h>
-#include <execinfo.h>
-#include <unistd.h>
 
-#define BACKTRACE_BUFFER_SIZE 1024
+#ifdef _WIN32
+    #include <windows.h>
+    #include <dbghelp.h>
+    #define BACKTRACE_BUFFER_SIZE 62
+#else
+    #include <execinfo.h>
+    #include <unistd.h>
+    #define BACKTRACE_BUFFER_SIZE 1024
+#endif
 
 #define PRINT(format) \
     va_list arguments; \
@@ -20,22 +26,31 @@ static void newline(void) {
     fputc('\n', stderr);
 }
 
-static _Noreturn void print_backtrace_and_exit(void)
+static noreturn void print_backtrace_and_exit(void)
 {
+#ifdef _WIN32
+    void *buffer[BACKTRACE_BUFFER_SIZE];
+    USHORT frames = CaptureStackBackTrace(0, BACKTRACE_BUFFER_SIZE, buffer, NULL);
+    fprintf(stderr, "Backtrace:\n");
+    for (USHORT i = 0; i < frames; i++) {
+        fprintf(stderr, "  [%d] %p\n", i, buffer[i]);
+    }
+#else
     void *buffer[BACKTRACE_BUFFER_SIZE];
     int backtrace_length = backtrace(buffer, BACKTRACE_BUFFER_SIZE);
     fprintf(stderr, "Backtrace:\n");
     backtrace_symbols_fd(buffer, backtrace_length, STDERR_FILENO);
+#endif
     exit(EXIT_FAILURE);
 }
 
-_Noreturn void fail(void)
+noreturn void fail(void)
 {
     fprintf(stderr, "Program execution failed.\n");
     print_backtrace_and_exit();
 }
 
-_Noreturn void fail_with_message(const char *format, ...)
+noreturn void fail_with_message(const char *format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -46,14 +61,14 @@ _Noreturn void fail_with_message(const char *format, ...)
     print_backtrace_and_exit();
 }
 
-_Noreturn void fail_with_errno()
+noreturn void fail_with_errno()
 {
     int errno_value = errno;
     fprintf(stderr, "Program execution failed. Errno: %d - %s\n", errno_value, strerror(errno_value));
     print_backtrace_and_exit();
 }
 
-_Noreturn void fail_with_message_and_errno(const char *format, ...) {
+noreturn void fail_with_message_and_errno(const char *format, ...) {
     fflush(stdout);
     fprintf(stderr, "Failed with errno: %d - %s\n", errno, strerror(errno));
     if (format) {
