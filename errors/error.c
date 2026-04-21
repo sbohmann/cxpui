@@ -26,7 +26,7 @@ static void newline(void) {
     fputc('\n', stderr);
 }
 
-static noreturn void print_backtrace_and_exit(void)
+static _Noreturn void print_backtrace_and_exit(void)
 {
 #ifdef _WIN32
     void *buffer[BACKTRACE_BUFFER_SIZE];
@@ -44,13 +44,13 @@ static noreturn void print_backtrace_and_exit(void)
     exit(EXIT_FAILURE);
 }
 
-noreturn void fail(void)
+_Noreturn void fail(void)
 {
     fprintf(stderr, "Program execution failed.\n");
     print_backtrace_and_exit();
 }
 
-noreturn void fail_with_message(const char *format, ...)
+_Noreturn void fail_with_message(const char *format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -61,19 +61,19 @@ noreturn void fail_with_message(const char *format, ...)
     print_backtrace_and_exit();
 }
 
-noreturn void fail_with_errno()
+_Noreturn void fail_with_errno()
 {
     int errno_value = errno;
     fprintf(stderr, "Program execution failed. Errno: %d - %s\n", errno_value, strerror(errno_value));
     print_backtrace_and_exit();
 }
 
-noreturn void fail_with_message_and_errno(const char *format, ...) {
+_Noreturn void fail_with_message_and_errno(const char *format, ...) {
     fflush(stdout);
     fprintf(stderr, "Failed with errno: %d - %s\n", errno, strerror(errno));
     if (format) {
         fputs("Reason: ", stderr);
-        PRINT(format)
+        //PRINT(format)
         newline();
     } else {
         fprintf(stderr, "fail was called.");
