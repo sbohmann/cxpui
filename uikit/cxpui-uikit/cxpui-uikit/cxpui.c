@@ -30,7 +30,7 @@ struct Window* View_as_window(struct View* view) {
 
 struct CompositeView* CompositeView_create(void) {
     struct CompositeView* result = allocate(sizeof(struct CustomView));
-    *result = (struct CompositeView){};
+    *result = (struct CompositeView){0};
     result->base.type = CompositeView;
     result->sub_views = ViewList_create();
     return result;
@@ -49,7 +49,7 @@ void CompositeView_paint(
 
 struct CustomView* CustomView_create() {
     struct CustomView* result = allocate(sizeof(struct CustomView));
-    *result = (struct CustomView){};
+    *result = (struct CustomView){0};
     result->base.type = CustomView;
     return result;
 }
