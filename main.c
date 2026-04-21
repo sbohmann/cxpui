@@ -6,7 +6,11 @@ void draw_demo_view(struct GraphicsContext context);
 int main(void) {
     struct Window *mainWindow = start();
     struct CompositeView *mainView = CompositeView_create();
+    mainView->base.width = 800;
+    mainView->base.height = 600;
     struct CustomView *demoView = CustomView_create();
+    demoView->base.width = 800;
+    demoView->base.height = 600;
     demoView->paint = &draw_demo_view;
     ViewList_add(mainView->sub_views, (struct View *) demoView);
     Window_set_main_view(mainWindow, (struct View *) mainView);
