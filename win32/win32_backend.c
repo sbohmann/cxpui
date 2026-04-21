@@ -29,8 +29,8 @@ struct Window *start(void) {
     // Create window centered on screen
     int screenWidth = GetSystemMetrics(SM_CXSCREEN);
     int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-    int windowWidth = 400;
-    int windowHeight = 200;
+    int windowWidth = 800;
+    int windowHeight = 600;
     int x = (screenWidth - windowWidth) / 2;
     int y = (screenHeight - windowHeight) / 2;
 
@@ -53,6 +53,10 @@ struct Window *start(void) {
     // Create and initialize the Window struct
     struct Window *window = (struct Window *)allocate(sizeof(struct Window));
     window->base.type = Window;
+    window->base.x = 0;
+    window->base.y = 0;
+    window->base.width = windowWidth;
+    window->base.height = windowHeight;
     window->native_view = g_hwnd;
     window->mainView = NULL;
 
@@ -71,13 +75,15 @@ void Application_run(void) {
 
 void Window_set_main_view(struct Window *window, struct View *view) {
     window->mainView = view;
+    view->width = window->base.width;
+    view->height = window->base.height;
     // Trigger a repaint
     if (g_hwnd) {
         InvalidateRect(g_hwnd, NULL, TRUE);
     }
 }
 
-void drawView(HDC hdc, struct View *view, RECT *bounds) {
+void drawView(HDC hdc, struct View *view) {
     if (view == NULL) {
         return;
     }
@@ -86,24 +92,26 @@ void drawView(HDC hdc, struct View *view, RECT *bounds) {
         struct CustomView *customView = (struct CustomView *)view;
         if (customView->paint) {
             struct GraphicsContext gc;
-            gc.width = bounds->right - bounds->left;
-            gc.height = bounds->bottom - bounds->top;
+            gc.width = view->width;
+            gc.height = view->height;
             gc.native_context = hdc;
             customView->paint(gc);
         }
     } else if (view->type == CompositeView) {
         struct CompositeView *compositeView = (struct CompositeView *)view;
 
-        // Define a context struct to pass both HDC and bounds
-        struct PaintContext {
-            HDC hdc;
-            RECT *bounds;
+        RECT rect = {
+            .left = 0,
+            .top = 0,
+            .right = view->x + view->width,
+            .bottom = view->y + view->height
         };
 
-        struct PaintContext paintCtx = { hdc, bounds };
+
+        FillRect(hdc, &rect, (HBRUSH)GetStockObject(WHITE_BRUSH));
 
         // Paint all sub-views
-        CompositeView_paint(compositeView, &paintCtx,
+        CompositeView_paint(compositeView, hdc,
             (void (*)(void *, struct View *))drawView);
     }
 }
@@ -114,14 +122,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
 
-            // Fill background with white
-            RECT rect;
-            GetClientRect(hwnd, &rect);
-            FillRect(hdc, &rect, (HBRUSH)GetStockObject(WHITE_BRUSH));
-
             // Draw the main view if it exists
             if (g_mainWindow && g_mainWindow->mainView) {
-                drawView(hdc, g_mainWindow->mainView, &rect);
+                drawView(hdc, g_mainWindow->mainView);
             }
 
             EndPaint(hwnd, &ps);
