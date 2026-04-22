@@ -4,15 +4,11 @@
 #include <windows.h>
 #include <stdlib.h>
 
-// Global state
-static struct Window *g_mainWindow = NULL;
-static HWND g_hwnd = NULL;
-
 // Window procedure callback
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 // Helper function to draw a view recursively
-void drawView(HDC hdc, struct View *view, RECT *bounds);
+void drawView(HDC hdc, struct View *view);
 
 struct Window *start(void) {
     WNDCLASSW wc = {0};
@@ -34,7 +30,7 @@ struct Window *start(void) {
     int x = (screenWidth - windowWidth) / 2;
     int y = (screenHeight - windowHeight) / 2;
 
-    g_hwnd = CreateWindowExW(
+    HWND hwnd = CreateWindowExW(
         0,
         L"CXPUIWindow",
         L"cxpui Win32 Window",
@@ -43,12 +39,9 @@ struct Window *start(void) {
         NULL, NULL, GetModuleHandle(NULL), NULL
     );
 
-    if (!g_hwnd) {
+    if (!hwnd) {
         return NULL;
     }
-
-    ShowWindow(g_hwnd, SW_SHOW);
-    UpdateWindow(g_hwnd);
 
     // Create and initialize the Window struct
     struct Window *window = (struct Window *)allocate(sizeof(struct Window));
@@ -57,10 +50,14 @@ struct Window *start(void) {
     window->base.y = 0;
     window->base.width = windowWidth;
     window->base.height = windowHeight;
-    window->native_view = g_hwnd;
+    window->native_view = hwnd;
     window->mainView = NULL;
 
-    g_mainWindow = window;
+    // Store the Window pointer in the HWND for later retrieval
+    SetWindowLongPtrW(hwnd, GWLP_USERDATA, (LONG_PTR)window);
+
+    ShowWindow(hwnd, SW_SHOW);
+    UpdateWindow(hwnd);
 
     return window;
 }
@@ -78,9 +75,8 @@ void Window_set_main_view(struct Window *window, struct View *view) {
     view->width = window->base.width;
     view->height = window->base.height;
     // Trigger a repaint
-    if (g_hwnd) {
-        InvalidateRect(g_hwnd, NULL, TRUE);
-    }
+    HWND hwnd = (HWND)window->native_view;
+    InvalidateRect(hwnd, NULL, TRUE);
 }
 
 void drawView(HDC hdc, struct View *view) {
@@ -117,14 +113,17 @@ void drawView(HDC hdc, struct View *view) {
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    // Retrieve the Window pointer from HWND
+    struct Window *window = (struct Window *)GetWindowLongPtrW(hwnd, GWLP_USERDATA);
+
     switch (msg) {
         case WM_PAINT: {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
 
             // Draw the main view if it exists
-            if (g_mainWindow && g_mainWindow->mainView) {
-                drawView(hdc, g_mainWindow->mainView);
+            if (window && window->mainView) {
+                drawView(hdc, window->mainView);
             }
 
             EndPaint(hwnd, &ps);

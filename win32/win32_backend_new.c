@@ -17,11 +17,6 @@
 #include "../view_list.h"
 #include "../core.h"
 
-/* ── Global state ────────────────────────────────────────────────── */
-
-static struct Window *g_mainWindow = NULL;
-static HWND           g_hwnd       = NULL;
-
 /* ── Forward declarations ────────────────────────────────────────── */
 
 static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -93,6 +88,9 @@ static void paint_view(HDC hdc, struct View *view) {
 /* ── Window procedure ────────────────────────────────────────────── */
 
 static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    /* Retrieve the Window pointer from HWND */
+    struct Window *window = (struct Window *)GetWindowLongPtrW(hwnd, GWLP_USERDATA);
+
     switch (msg) {
     case WM_PAINT: {
         PAINTSTRUCT ps;
@@ -103,8 +101,8 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         GetClientRect(hwnd, &client);
         FillRect(hdc, &client, (HBRUSH)GetStockObject(WHITE_BRUSH));
 
-        if (g_mainWindow && g_mainWindow->mainView) {
-            struct View *root = g_mainWindow->mainView;
+        if (window && window->mainView) {
+            struct View *root = window->mainView;
 
             /* Propagate actual client size down to the view tree,
              * same as the GTK4 backend does in its snapshot vfunc. */
@@ -158,29 +156,31 @@ struct Window *start(void) {
     int screenH = GetSystemMetrics(SM_CYSCREEN);
     int winW = 800, winH = 600;
 
-    g_hwnd = CreateWindowExW(
+    HWND hwnd = CreateWindowExW(
         0, L"CXPUIWindow", L"cxpui \x2013 Win32",
         WS_OVERLAPPEDWINDOW,
         (screenW - winW) / 2, (screenH - winH) / 2,
         winW, winH,
         NULL, NULL, GetModuleHandle(NULL), NULL);
 
-    if (!g_hwnd) {
+    if (!hwnd) {
         fail_with_message("CreateWindowExW failed");
     }
-
-    ShowWindow(g_hwnd, SW_SHOW);
-    UpdateWindow(g_hwnd);
 
     struct Window *w = allocate(sizeof(struct Window));
     *w = (struct Window){0};
     w->base.type   = Window;
     w->base.width  = winW;
     w->base.height = winH;
-    w->native_view = g_hwnd;
+    w->native_view = hwnd;
     w->mainView    = NULL;
 
-    g_mainWindow = w;
+    /* Store the Window pointer in the HWND for later retrieval */
+    SetWindowLongPtrW(hwnd, GWLP_USERDATA, (LONG_PTR)w);
+
+    ShowWindow(hwnd, SW_SHOW);
+    UpdateWindow(hwnd);
+
     return w;
 }
 
@@ -202,9 +202,8 @@ struct Window *Window_create(void *native_view) {
 
 void Window_set_main_view(struct Window *window, struct View *view) {
     window->mainView = view;
-    if (g_hwnd) {
-        InvalidateRect(g_hwnd, NULL, TRUE);
-    }
+    HWND hwnd = (HWND)window->native_view;
+    InvalidateRect(hwnd, NULL, TRUE);
 }
 
 struct NativeView *NativeView_create(void *native_view) {
