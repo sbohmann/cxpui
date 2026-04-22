@@ -149,7 +149,11 @@ struct Window *start(void) {
     wc.hbrBackground  = (HBRUSH)(COLOR_WINDOW + 1);
 
     if (!RegisterClassW(&wc)) {
-        fail_with_message("RegisterClassW failed");
+        DWORD err = GetLastError();
+        WCHAR buf[256];
+        FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                       NULL, err, 0, buf, 256, NULL);
+        fail_with_message("RegisterClassW failed with error %lu: %ls", err, buf);
     }
 
     int screenW = GetSystemMetrics(SM_CXSCREEN);
@@ -164,7 +168,11 @@ struct Window *start(void) {
         NULL, NULL, GetModuleHandle(NULL), NULL);
 
     if (!hwnd) {
-        fail_with_message("CreateWindowExW failed");
+        DWORD err = GetLastError();
+        WCHAR buf[256];
+        FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                       NULL, err, 0, buf, 256, NULL);
+        fail_with_message("CreateWindowExW failed with error %lu: %ls", err, buf);
     }
 
     struct Window *w = allocate(sizeof(struct Window));
